@@ -41,9 +41,11 @@ namespace ntw.CurvedTextMeshPro
         private TMP_Text m_TextComponent;
 
         /// <summary>
-        /// True if the text must be updated at this frame 
+        /// True if the text must be updated at this frame
         /// </summary>
         private bool m_forceUpdate;
+
+        private string m_lastText;
 
         /// <summary>
         /// Awake
@@ -62,20 +64,28 @@ namespace ntw.CurvedTextMeshPro
             m_forceUpdate = true;
         }
 
+        public void ForceUpdate()
+        {
+            m_forceUpdate = true;
+        }
+
         /// <summary>
         /// Update
         /// </summary>
         protected void Update()
         {
             //if the text and the parameters are the same of the old frame, don't waste time in re-computing everything
-            if (!m_forceUpdate && !m_TextComponent.havePropertiesChanged && !ParametersHaveChanged())
+            if (!m_forceUpdate && !m_TextComponent.havePropertiesChanged && !ParametersHaveChanged() && m_TextComponent.text == m_lastText)
             {
                 return;
             }
 
+            Debug.Log("Regenerating mesh");
+            m_lastText = m_TextComponent.text;
+
             m_forceUpdate = false;
 
-            //during the loop, vertices represents the 4 vertices of a single character we're analyzing, 
+            //during the loop, vertices represents the 4 vertices of a single character we're analyzing,
             //while matrix is the roto-translation matrix that will rotate and scale the characters so that they will
             //follow the curve
             Vector3[] vertices;
@@ -91,7 +101,7 @@ namespace ntw.CurvedTextMeshPro
             if (characterCount == 0)
                 return;
 
-            //gets the bounds of the rectangle that contains the text 
+            //gets the bounds of the rectangle that contains the text
             float boundsMinX = m_TextComponent.bounds.min.x;
             float boundsMaxX = m_TextComponent.bounds.max.x;
 
@@ -112,7 +122,7 @@ namespace ntw.CurvedTextMeshPro
                 //we will use this as the point representing this character for the geometry transformations
                 Vector3 charMidBaselinePos = new Vector2((vertices[vertexIndex + 0].x + vertices[vertexIndex + 2].x) / 2, textInfo.characterInfo[i].baseLine);
 
-                //remove the central point from the vertices point. After this operation, every one of the four vertices 
+                //remove the central point from the vertices point. After this operation, every one of the four vertices
                 //will just have as coordinates the offset from the central position. This will come handy when will deal with the rotations
                 vertices[vertexIndex + 0] += -charMidBaselinePos;
                 vertices[vertexIndex + 1] += -charMidBaselinePos;
