@@ -80,7 +80,6 @@ namespace ntw.CurvedTextMeshPro
                 return;
             }
 
-            Debug.Log("Regenerating mesh");
             m_lastText = m_TextComponent.text;
 
             m_forceUpdate = false;
