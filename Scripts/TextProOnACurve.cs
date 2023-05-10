@@ -62,6 +62,7 @@ namespace ntw.CurvedTextMeshPro
         {
             //every time the object gets enabled, we have to force a re-creation of the text mesh
             m_forceUpdate = true;
+            Update();
         }
 
         public void ForceUpdate()
